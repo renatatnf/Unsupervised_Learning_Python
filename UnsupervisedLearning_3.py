@@ -3,6 +3,7 @@
 
 @author: renata.fernandes
 """
+# CHAPTER 3 - Decorrelating your data and dimension reduction
 
 # #Correlated data in nature
 # # Perform the necessary imports

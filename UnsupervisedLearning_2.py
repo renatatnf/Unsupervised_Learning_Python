@@ -5,50 +5,66 @@
 
 # CHAPTER 2 -  Visualization with hierarchical clustering and t-SNE
 
-# #Hierarchical clustering of the grain data
-# # Perform the necessary imports
-# from scipy.cluster.hierarchy import linkage, dendrogram
-# import matplotlib.pyplot as plt
-
-# # Calculate the linkage: mergings
-# mergings = linkage(samples,method='complete')
-
-# # Plot the dendrogram, using varieties as labels
-# dendrogram(mergings,
-#            labels=varieties,
-#            leaf_rotation=90,
-#            leaf_font_size=6,
-# )
-# plt.show()
+# Import necessary modules
+import pandas as pd
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler, Normalizer,normalize
+from scipy.cluster.hierarchy import linkage, dendrogram
 
 
-# #Hierarchies of stocks
-# # Import normalize
-# from sklearn.preprocessing import normalize
+#Hierarchical clustering of the grain data
 
-# # Normalize the movements: normalized_movements
-# normalized_movements = normalize(movements)
+grain_df = pd.read_csv('Dados/Grains/seeds.csv', sep=',')
+grain_df['varieties'] = grain_df['varieties'].replace([1,2,3],["Canadian wheat","Kama wheat", "Rosa wheat"])
+# Create arrays for the features and the response variable
+varieties = grain_df['varieties'].values
+samples = grain_df.drop('varieties', axis=1).values
 
-# # Calculate the linkage: mergings
-# mergings = linkage(normalized_movements,method='complete')
+# Calculate the linkage: mergings
+mergings = linkage(samples,method='complete')
 
-# # Plot the dendrogram
-# dendrogram(mergings, labels=companies, leaf_rotation=90, leaf_font_size=6)
-# plt.show()
+# Plot the dendrogram, using varieties as labels
+dendrogram(mergings,
+            labels=varieties,
+            leaf_rotation=90,
+            leaf_font_size=6,
+)
+plt.show()
 
 
+#Hierarchies of stocks
 
-# #Different linkage, different hierarchical clustering!
-# # Perform the necessary imports
-# import matplotlib.pyplot as plt
-# from scipy.cluster.hierarchy import linkage, dendrogram
+stocks_df = pd.read_csv('Dados/company-stock-movements-2010-2015-incl.csv', sep=',')
+# Create arrays for the features and the response variable
+stock_companies = stocks_df['company'].values
+stock_movements = stocks_df.drop('company', axis=1).values
 
-# # Calculate the linkage: mergings
-# mergings = linkage(samples, method='single')
+# Normalize the movements: normalized_movements
+normalized_movements = normalize(stock_movements)
 
-# # Plot the dendrogram
-# dendrogram(mergings, labels=country_names, leaf_rotation=90, leaf_font_size=6)
-# plt.show()
+# Calculate the linkage: mergings
+mergings = linkage(normalized_movements,method='complete')
+
+# Plot the dendrogram
+dendrogram(mergings, labels=stock_companies, leaf_rotation=90, leaf_font_size=6)
+plt.show()
+
+
+#Different linkage, different hierarchical clustering!
+
+eurovision_df = pd.read_csv('Dados/eurovision-2016.csv', sep=',')
+# Create arrays for the features and the response variable
+country_names = eurovision_df['From country'].values
+samples = eurovision_df.drop(['From country', 'To country', 'Jury Points', 'Televote Points'], axis=1).values
+
+# Calculate the linkage: mergings
+mergings = linkage(samples, method='single')
+
+# Plot the dendrogram
+dendrogram(mergings, labels=country_names, leaf_rotation=90, leaf_font_size=6)
+plt.show()
 
 
 # #Extracting the cluster labels

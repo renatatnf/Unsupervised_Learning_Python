@@ -3,7 +3,8 @@
 @author: renata.fernandes
 """
 
-# #CHAPTER 4
+# #CHAPTER 4 - Discovering interpretable features
+
 # #NMF applied to Wikipedia articles
 # # Import NMF
 # from sklearn.decomposition import NMF
