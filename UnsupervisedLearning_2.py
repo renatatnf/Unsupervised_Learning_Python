@@ -85,16 +85,16 @@ print(ct)
 #Extracting the cluster labels
 
 # Create a TSNE instance: model
-model = TSNE(learning_rate=200)
+model_grain = TSNE(learning_rate=200)
 
 # Apply fit_transform to samples: tsne_features
-tsne_features = model.fit_transform(samples_grain)
+tsne_features_grain = model_grain.fit_transform(samples_grain)
 
 # Select the 0th feature: xs
-xs = tsne_features[:,0]
+xs = tsne_features_grain[:,0]
 
 # Select the 1st feature: ys
-ys = tsne_features[:,1]
+ys = tsne_features_grain[:,1]
 
 # Scatter plot, coloring by variety_numbers
 label_encoder = LabelEncoder()
@@ -104,27 +104,25 @@ plt.show()
 
 
 # #A t-SNE map of the stock market
-# # Import TSNE
-# from sklearn.manifold import TSNE
 
-# # Create a TSNE instance: model
-# model = TSNE(learning_rate=50)
+# Create a TSNE instance: model
+model_stock = TSNE(learning_rate=50)
 
-# # Apply fit_transform to normalized_movements: tsne_features
-# tsne_features = model.fit_transform(normalized_movements)
+# Apply fit_transform to normalized_movements: tsne_features
+tsne_features_stock = model_stock.fit_transform(normalized_movements)
 
-# # Select the 0th feature: xs
-# xs = tsne_features[:,0]
+# Select the 0th feature: xs
+xs = tsne_features_stock[:,0]
 
-# # Select the 1th feature: ys
-# ys = tsne_features[:,1]
+# Select the 1th feature: ys
+ys = tsne_features_stock[:,1]
 
-# # Scatter plot
-# plt.scatter(xs, ys, alpha=0.5)
+# Scatter plot
+plt.scatter(xs, ys, alpha=0.5)
 
-# # Annotate the points
-# for x, y, company in zip(xs, ys, companies):
-#     plt.annotate(company, (x, y), fontsize=5, alpha=0.75)
-# plt.show()
+# Annotate the points
+for x, y, company in zip(xs, ys, stocks_df['company']):
+    plt.annotate(company, (x, y), fontsize=5, alpha=0.75)
+plt.show()
 
 
