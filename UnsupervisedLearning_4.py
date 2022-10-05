@@ -3,85 +3,88 @@
 @author: renata.fernandes
 """
 
-# #CHAPTER 4 - Discovering interpretable features
+#CHAPTER 4 - Discovering interpretable features
+# Perform the necessary imports
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.decomposition import NMF
+from scipy.sparse import csr_matrix
 
-# #NMF applied to Wikipedia articles
-# # Import NMF
-# from sklearn.decomposition import NMF
+#NMF applied to Wikipedia articles
+articles_df = pd.read_csv('Dados/Wikipedia articles/wikipedia-vectors.csv', sep=',', index_col=0)
+articles = csr_matrix(articles_df.transpose())
+titles = list(articles_df.columns)
 
-# # Create an NMF instance: model
-# model = NMF(n_components=6)
+# Create an NMF instance: model
+model = NMF(n_components=6)
 
-# # Fit the model to articles
-# model.fit(articles)
+# Fit the model to articles
+model.fit(articles)
 
-# # Transform the articles: nmf_features
-# nmf_features = model.transform(articles)
+# Transform the articles: nmf_features
+nmf_features = model.transform(articles)
 
-# # Print the NMF features
-# print(nmf_features.round(2))
-
-
-# #NMF features of the Wikipedia articles
-# # Import pandas
-# import pandas as pd
-
-# # Create a pandas DataFrame: df
-# df = pd.DataFrame(nmf_features,index=titles)
-
-# # Print the row for 'Anne Hathaway'
-# print(df.loc['Anne Hathaway',:])
-
-# # Print the row for 'Denzel Washington'
-# print(df.loc['Denzel Washington',:])
+# Print the NMF features
+print(nmf_features.round(2))
 
 
+#NMF features of the Wikipedia articles
 
-# #NMF reconstructs samples
-# NMF_Components = np.array([[1,0.5,0],[0.2,0.1,2.1]])
-# featuresValuesSample= np.array([[2,1]])
-# np.dot(featuresValuesSample,NMF_Components)
+# Create a pandas DataFrame: df
+df = pd.DataFrame(nmf_features,index=titles)
+
+# Print the row for 'Anne Hathaway'
+print(df.loc['Anne Hathaway',:])
+
+# Print the row for 'Denzel Washington'
+print(df.loc['Denzel Washington',:])
 
 
 
-# #NMF learns topics of documents
-# # Import pandas
-# import pandas as pd
-
-# # Create a DataFrame: components_df
-# components_df = pd.DataFrame(model.components_, columns=words)
-
-# # Print the shape of the DataFrame
-# print(components_df.shape)
-
-# # Select row 3: component
-# component = components_df.iloc[3,:]
-
-# # Print result of nlargest
-# print(component.nlargest())
+#NMF reconstructs samples
+NMF_Components = np.array([[1,0.5,0],[0.2,0.1,2.1]])
+featuresValuesSample= np.array([[2,1]])
+np.dot(featuresValuesSample,NMF_Components)
 
 
+#NMF learns topics of documents
 
-# #Explore the LED digits dataset
-# # Import pyplot
-# from matplotlib import pyplot as plt
+# Create a DataFrame: components_df
+f = open('Dados/Wikipedia articles/wikipedia-vocabulary-utf8.txt', 'r')
+#print(f.read())
+words = f.read().splitlines()
 
-# # Select the 0th row: digit
-# digit = samples[0,:]
+components_df = pd.DataFrame(model.components_, columns=words)
 
-# # Print digit
-# print(digit)
+# Print the shape of the DataFrame
+print(components_df.shape)
 
-# # Reshape digit to a 13x8 array: bitmap
-# bitmap = digit.reshape(13,8)
+# Select row 3: component
+component = components_df.iloc[3,:]
 
-# # Print bitmap
-# print(bitmap)
+# Print result of nlargest
+print(component.nlargest())
 
-# # Use plt.imshow to display bitmap
-# plt.imshow(bitmap, cmap='gray', interpolation='nearest')
-# plt.colorbar()
-# plt.show()
+
+#Explore the LED digits dataset
+
+# Select the 0th row: digit
+digit = samples[0,:]
+
+# Print digit
+print(digit)
+
+# Reshape digit to a 13x8 array: bitmap
+bitmap = digit.reshape(13,8)
+
+# Print bitmap
+print(bitmap)
+
+# Use plt.imshow to display bitmap
+plt.imshow(bitmap, cmap='gray', interpolation='nearest')
+plt.colorbar()
+plt.show()
 
 
 
