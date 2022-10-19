@@ -8,8 +8,10 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.decomposition import NMF
+from sklearn.decomposition import NMF,  PCA
 from scipy.sparse import csr_matrix
+from sklearn.preprocessing import normalize, Normalizer, MaxAbsScaler
+from sklearn.pipeline import make_pipeline
 
 #NMF applied to Wikipedia articles
 articles_df = pd.read_csv('Dados/Wikipedia articles/wikipedia-vectors.csv', sep=',', index_col=0)
@@ -67,10 +69,32 @@ component = components_df.iloc[3,:]
 print(component.nlargest())
 
 
-#Explore the LED digits dataset
+#Which articles are similar to 'Cristiano Ronaldo'?
 
+# Normalize the NMF features: norm_features
+norm_features = normalize(nmf_features)
+
+# Create a DataFrame: df
+df = pd.DataFrame(norm_features, index=titles)
+
+# Select the row corresponding to 'Cristiano Ronaldo': article
+article = df.loc['Cristiano Ronaldo']
+
+# Compute the dot products: similarities
+similarities = df.dot(article)
+
+# Display those with the largest cosine similarity
+print(similarities.nlargest())
+
+
+
+
+
+#Explore the LED digits dataset
+lcd_df = pd.read_csv('Dados/lcd-digits.csv', sep=',',header = None)
+lcd_df_samples =  lcd_df.to_numpy()
 # Select the 0th row: digit
-digit = samples[0,:]
+digit = lcd_df_samples[0,:]
 
 # Print digit
 print(digit)
@@ -88,78 +112,49 @@ plt.show()
 
 
 
-# #NMF learns the parts of images
-# def show_as_image(sample):
-#     bitmap = sample.reshape((13, 8))
-#     plt.figure()
-#     plt.imshow(bitmap, cmap='gray', interpolation='nearest')
-#     plt.colorbar()
-#     plt.show()
+#NMF learns the parts of images
+def show_as_image(sample):
+    bitmap = sample.reshape((13, 8))
+    plt.figure()
+    plt.imshow(bitmap, cmap='gray', interpolation='nearest')
+    plt.colorbar()
+    plt.show()
 
-# # Import NMF
-# from sklearn.decomposition import NMF
+# Create an NMF model: model
+model = NMF(n_components=7)
 
-# # Create an NMF model: model
-# model = NMF(n_components=7)
+# Apply fit_transform to samples: features
+features = model.fit_transform(lcd_df_samples)
 
-# # Apply fit_transform to samples: features
-# features = model.fit_transform(samples)
+# Call show_as_image on each component
+for component in model.components_:
+    show_as_image(component)
 
-# # Call show_as_image on each component
-# for component in model.components_:
-#     show_as_image(component)
+# Assign the 0th row of features: digit_features
+digit_features = features[0,:]
 
-# # Assign the 0th row of features: digit_features
-# digit_features = features[0,:]
-
-# # Print digit_features
-# print(digit_features)
+# Print digit_features
+print(digit_features)
 
 
 
-# #PCA doesn't learn parts
-# # Import PCA
-# from sklearn.decomposition import PCA
+#PCA doesn't learn parts
 
-# # Create a PCA instance: model
-# model = PCA(n_components=7)
+# Create a PCA instance: model
+model = PCA(n_components=7)
 
-# # Apply fit_transform to samples: features
-# features = model.fit_transform(samples)
+# Apply fit_transform to samples: features
+features = model.fit_transform(lcd_df_samples)
 
-# # Call show_as_image on each component
-# for component in model.components_:
-#     show_as_image(component)
+# Call show_as_image on each component
+for component in model.components_:
+    show_as_image(component)
     
     
-    
-# #Which articles are similar to 'Cristiano Ronaldo'?
-# # Perform the necessary imports
-# import pandas as pd
-# from sklearn.preprocessing import normalize
-
-# # Normalize the NMF features: norm_features
-# norm_features = normalize(nmf_features)
-
-# # Create a DataFrame: df
-# df = pd.DataFrame(norm_features, index=titles)
-
-# # Select the row corresponding to 'Cristiano Ronaldo': article
-# article = df.loc['Cristiano Ronaldo']
-
-# # Compute the dot products: similarities
-# similarities = df.dot(article)
-
-# # Display those with the largest cosine similarity
-# print(similarities.nlargest())
-
-
 
 # #Recommend musical artists part 1
-# # Perform the necessary imports
-# from sklearn.decomposition import NMF
-# from sklearn.preprocessing import Normalizer, MaxAbsScaler
-# from sklearn.pipeline import make_pipeline
+# artists_names_df = pd.read_csv('Dados/Musical artists/artists.csv', sep=',', header = None)
+# artists_df = pd.read_csv('Dados/Musical artists/scrobbler-small-sample.csv', sep=',')
 
 # # Create a MaxAbsScaler: scaler
 # scaler = MaxAbsScaler()
@@ -174,15 +169,13 @@ plt.show()
 # pipeline = make_pipeline(scaler,nmf,normalizer)
 
 # # Apply fit_transform to artists: norm_features
-# norm_features = pipeline.fit_transform(artists)
+# norm_features = pipeline.fit_transform(artists_df)
 
 
 # #Recommend musical artists part 2
-# # Import pandas
-# import pandas as pd
 
 # # Create a DataFrame: df
-# df = pd.DataFrame(norm_features, index=artist_names)
+# df = pd.DataFrame(norm_features, index=artists_names_df[:])
 
 # # Select row of 'Bruce Springsteen': artist
 # artist = df.loc['Bruce Springsteen']
